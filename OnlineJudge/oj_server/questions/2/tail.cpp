@@ -1,3 +1,8 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <unordered_map>
+using namespace std;
 #ifndef COMPILER_ONLINE
 #include "header.cpp"
 #endif

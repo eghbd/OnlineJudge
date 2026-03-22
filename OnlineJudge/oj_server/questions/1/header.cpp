@@ -1,17 +1,15 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include <map>
-#include <algorithm>
+#include <stack>
+#include <unordered_map>
 
 using namespace std;
 
-class Solution{
-    public:
-        bool isPalindrome(int x)
-        {
-            //将你的代码写在下面
-            
-            return true;
-        }
+class Solution {
+public:
+    bool isValid(string s) {
+        // 将你的代码写在下面
+        
+        return false;
+    }
 };

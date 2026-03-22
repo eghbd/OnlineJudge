@@ -63,7 +63,7 @@ namespace ns_control
             load = 0;
             if(mtx) mtx->unlock();
         }
-        // 获取主机负载
+        //获取主机负载（没有太大的意义）
         uint64_t Load()
         {
             uint64_t _load = 0;
@@ -220,12 +220,8 @@ namespace ns_control
         View view_;   //提供html渲染功能
         LoadBlance load_blance_; //核心负载均衡器
     public:
-        Control()
-        {
-        }
-        ~Control()
-        {
-        }
+        Control(){}
+        ~Control(){}
 
     public:
         void RecoveryMachine()

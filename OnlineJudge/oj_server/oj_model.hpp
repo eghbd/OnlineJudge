@@ -84,7 +84,7 @@ namespace ns_model
 
                 questions.insert({q.number, q});
             }
-            LOG(INFO) << "加载题库...成功!" << "\n";
+            LOG(INFO) << "加载成功!" << "\n";
             in.close();
 
             return true;

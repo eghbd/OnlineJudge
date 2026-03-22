@@ -9,8 +9,8 @@
     <!-- 引入 Ace 代码编辑器 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
-    <!-- 引入jquery CDN -->
-    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- 引入jquery CDN（改用https） -->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
     <style>
         /* 全局样式重置和基础设置 */
@@ -18,15 +18,15 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
 
         html,
         body {
             width: 100%;
             height: 100%;
-            background-color: #f8f9fa;
-            color: #333;
+            background-color: #f0f4f8;
+            color: #1e293b;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         /* 容器样式 */
@@ -36,17 +36,29 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 导航栏样式优化 */
         .container .navbar {
             width: 100%;
-            height: 60px;
-            background-color: #2c3e50;
+            height: 64px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0 24px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
             z-index: 100;
         }
 
@@ -54,19 +66,19 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 100px;
-            height: 60px;
+            height: 100%;
+            padding: 0 24px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 4px;
-            margin: 0 5px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .container .navbar a:hover {
-            background-color: #34495e;
-            color: #34d399;
+            background-color: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
 
@@ -78,8 +90,8 @@
         .container .part1 {
             display: flex;
             flex: 1;
-            padding: 20px;
-            gap: 20px;
+            padding: 24px;
+            gap: 24px;
             min-height: 600px;
         }
 
@@ -87,44 +99,49 @@
         .container .part1 .left_desc {
             flex: 1;
             background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
             overflow-y: auto;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
         .container .part1 .left_desc h3 {
-            color: #2c3e50;
-            font-size: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eaecef;
+            color: #1e293b;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #3b82f6;
         }
 
         .container .part1 .left_desc h3 #number {
-            color: #3498db;
-            font-weight: 700;
+            color: #3b82f6;
+            font-weight: 800;
         }
 
         .container .part1 .left_desc pre {
             font-size: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             white-space: pre-wrap;
             word-wrap: break-word;
-            color: #444;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 10px;
+            color: #334155;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+            margin-top: 16px;
+            line-height: 1.7;
         }
 
         /* 代码编辑器区域优化 */
         .container .part1 .right_code {
             flex: 1;
             background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
             overflow: hidden;
         }
 
@@ -137,79 +154,137 @@
         .container .part2 {
             display: flex;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
             background-color: white;
-            margin: 0 20px 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 0 24px 24px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
         }
 
         .container .part2 .result {
             flex: 1;
             margin: 0;
-            padding: 10px;
+            padding: 0 20px 0 0;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .container .part2 .result p {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
+            color: #1e293b;
+            margin-bottom: 12px;
         }
 
         .container .part2 .result pre {
             font-size: 15px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            padding: 18px 22px;
+            background-color: #fefefe;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
             white-space: pre-wrap;
             word-wrap: break-word;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* 错误提示样式 */
+        .container .part2 .result .error {
+            border-left-color: #ef4444;
+            color: #991b1b;
+            background-color: #fef2f2;
+        }
+
+        /* 成功提示样式 */
+        .container .part2 .result .success {
+            border-left-color: #10b981;
+            color: #065f46;
+            background-color: #ecfdf5;
         }
 
         /* 提交按钮美化 */
         .container .part2 .btn-submit {
-            width: 140px;
-            height: 50px;
+            width: 160px;
+            height: 52px;
             font-size: 16px;
             font-weight: 600;
-            background-color: #3498db;
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
             margin: 0;
         }
 
         .container .part2 .btn-submit:hover {
-            background-color: #2980b9;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(52, 152, 219, 0.3);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
         }
 
         .container .part2 .btn-submit:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
         }
 
         /* 响应式适配 */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .container .part1 {
                 flex-direction: column;
             }
             
+            .container .part1 .left_desc,
+            .container .part1 .right_code {
+                flex: none;
+                height: 50vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container .navbar {
+                padding: 0 16px;
+                height: 56px;
+            }
+            
             .container .navbar a {
-                width: 80px;
+                padding: 0 16px;
                 font-size: 14px;
+            }
+            
+            .container .part1 {
+                padding: 16px;
+                gap: 16px;
+            }
+            
+            .container .part1 .left_desc,
+            .container .part1 .right_code {
+                height: 45vh;
             }
             
             .container .part2 {
                 flex-direction: column;
                 gap: 20px;
+                padding: 20px;
+                margin: 0 16px 16px;
+            }
+            
+            .container .part2 .result {
+                padding: 0;
+                width: 100%;
             }
             
             .container .part2 .btn-submit {
@@ -233,7 +308,7 @@
                 <pre>{{desc}}</pre>
             </div>
             <div class="right_code">
-                <pre id="code" class="ace_editor"><textarea class="ace_text-input">{{pre_code}}</textarea></pre>
+                <div id="code" class="ace_editor">{{pre_code}}</div>
             </div>
         </div>
         <!-- 提交并且得到结果，并显示 -->
@@ -243,89 +318,118 @@
         </div>
     </div>
     <script>
-        //初始化对象
-        editor = ace.edit("code");
+        // 等待DOM加载完成后初始化编辑器
+        $(document).ready(function() {
+            //初始化Ace编辑器
+            var editor = ace.edit("code");
 
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/c_cpp");
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/c_cpp");
 
-        // 字体大小
-        editor.setFontSize(16);
-        // 设置默认制表符的大小:
-        editor.getSession().setTabSize(4);
+            // 字体大小
+            editor.setFontSize(16);
+            // 设置默认制表符的大小:
+            editor.getSession().setTabSize(4);
 
-        // 设置只读（true时只读，用于展示代码）
-        editor.setReadOnly(false);
+            // 设置只读（true时只读，用于展示代码）
+            editor.setReadOnly(false);
 
-        // 启用提示菜单
-        ace.require("ace/ext/language_tools");
-        editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true,
-            enableLiveAutocompletion: true
+            // 启用提示菜单
+            ace.require("ace/ext/language_tools");
+            editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+
+            // 将editor挂载到window，方便全局访问
+            window.editor = editor;
         });
 
         function submit(){
-            // 1. 收集当前页面的有关数据, 1. 题号 2.代码
-            var code = editor.getSession().getValue();
-            // console.log(code);
-            var number = $(".container .part1 .left_desc h3 #number").text();
-            // console.log(number);
+            // 1. 收集当前页面的有关数据
+            var code = window.editor.getSession().getValue();
+            var number = $("#number").text().trim(); // 简化选择器
+            
+            if (!number) {
+                show_result({
+                    status: -1,
+                    reason: "错误：无法获取题号"
+                });
+                return;
+            }
+            
             var judge_url = "/judge/" + number;
-            // console.log(judge_url);
-            // 2. 构建json，并通过ajax向后台发起基于http的json请求
+            
+            // 显示加载状态
+            show_result({
+                status: -2,
+                reason: "正在提交代码，请稍候..."
+            });
+
+            // 2. 构建json，并通过ajax向后台发起请求
             $.ajax({
-                method: 'Post',   // 向后端发起请求的方式
-                url: judge_url,   // 向后端指定的url发起请求
-                dataType: 'json', // 告知server，我需要什么格式
-                contentType: 'application/json;charset=utf-8',  // 告知server，我给你的是什么格式
+                method: 'POST',   // 规范写法：POST大写
+                url: judge_url,   
+                dataType: 'json', 
+                contentType: 'application/json;charset=utf-8',
                 data: JSON.stringify({
-                    'code':code,
+                    'code': code,
                     'input': ''
                 }),
-                success: function(data){
-                    //成功得到结果
-                    // console.log(data);
+                success: function(data) {
+                    // 成功得到结果
                     show_result(data);
-                }
-            });
-            // 3. 得到结果，解析并显示到 result中
-            function show_result(data)
-            {
-                // console.log(data.status);
-                // console.log(data.reason);
-                // 拿到result结果标签
-                var result_div = $(".container .part2 .result");
-                // 清空上一次的运行结果
-                result_div.empty();
-
-                // 首先拿到结果的状态码和原因结果
-                var _status = data.status;
-                var _reason = data.reason;
-
-                var reason_lable = $( "<p>",{
-                       text: _reason
-                });
-                reason_lable.appendTo(result_div);
-
-                if(_status == 0){ // 修复变量名错误（原代码写的是status，应该是_status）
-                    // 请求是成功的，编译运行过程没出问题，但是结果是否通过看测试用例的结果
-                    var _stdout = data.stdout;
-                    var _stderr = data.stderr;
-
-                    var stdout_lable = $("<pre>", {
-                        text: _stdout
+                },
+                error: function(xhr, status, error) {
+                    // 捕获Ajax请求错误
+                    show_result({
+                        status: -1,
+                        reason: "请求失败：" + error,
+                        stderr: "HTTP状态码：" + xhr.status + "\n错误信息：" + xhr.responseText
                     });
+                },
+                timeout: 30000 // 设置30秒超时
+            });
+        }
 
-                    var stderr_lable = $("<pre>", {
-                        text: _stderr
-                    })
+        // 3. 显示结果函数（移到全局作用域）
+        function show_result(data) {
+            var result_div = $(".container .part2 .result");
+            // 清空上一次的运行结果
+            result_div.empty();
 
-                    stdout_lable.appendTo(result_div);
-                    stderr_lable.appendTo(result_div);
-                }
-                else{
-                    // 编译运行出错,do nothing
+            // 首先拿到结果的状态码和原因结果
+            var _status = data.status;
+            var _reason = data.reason || "未知错误";
+
+            // 创建状态提示
+            var reason_label = $("<p>").text(_reason);
+            result_div.append(reason_label);
+
+            // 处理正常返回结果
+            if(_status == 0){ // 修复变量名错误（原代码写的是status，应该是_status）
+                // 请求是成功的，编译运行过程没出问题，但是结果是否通过看测试用例的结果
+                var _stdout = data.stdout;
+                var _stderr = data.stderr;
+
+                var stdout_lable = $("<pre>", {
+                    text: _stdout
+                });
+
+                var stderr_lable = $("<pre>", {
+                    text: _stderr
+                })
+
+                stdout_lable.appendTo(result_div);
+                stderr_lable.appendTo(result_div);
+            }
+            // 处理错误状态
+            else if (_status !== -2) { // -2是加载状态，不显示错误样式
+                var error_detail = data.stderr || "";
+                if (error_detail) {
+                    var error_label = $("<pre>").text("错误详情：\n" + error_detail).addClass("error");
+                    result_div.append(error_label);
                 }
             }
         }

@@ -1,3 +1,7 @@
+#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
 #ifndef COMPILER_ONLINE
 #include "header.cpp"
 #endif
