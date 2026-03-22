@@ -64,14 +64,14 @@ namespace ns_control
             if(mtx) mtx->unlock();
         }
         // 获取主机负载（没有太大的意义）
-        // uint64_t Load()
-        // {
-        //     uint64_t _load = 0;
-        //     if (mtx) mtx->lock();
-        //     _load = load;
-        //     if (mtx) mtx->unlock();
-        //     return _load;
-        // }
+        uint64_t Load()
+        {
+            uint64_t _load = 0;
+            if (mtx) mtx->lock();
+            _load = load;
+            if (mtx) mtx->unlock();
+            return _load;
+        }
     };
     //对应的主机配置文件
     const std::string service_machine = "./conf/service_machine.conf";
