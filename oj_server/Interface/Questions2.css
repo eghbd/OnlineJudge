@@ -1,0 +1,59 @@
+/* 编辑页面的优化 */
+/* 基础布局样式 */
+.container {
+    width: 95%;
+    margin: 0 auto;
+    padding: 10px;
+}
+.navbar {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    border-radius: 0; /* 置顶导航栏取消圆角，更贴合顶部 */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    
+    /* 核心：让导航栏固定在顶部 */
+    position: fixed;    /* 固定定位 */
+    top: 0;             /* 距离顶部0像素 */
+    left: 0;            /* 距离左侧0像素 */
+    right: 0;           /* 距离右侧0像素，撑满全屏宽度 */
+    z-index: 9999;      /* 提高层级，避免被其他元素遮挡 */
+}
+.navbar a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #333;
+}
+.navbar a.login {
+    float: right;
+}
+.part1 {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.left_desc {
+    flex: 1;
+}
+.right_code {
+    flex: 1;
+    border: 1px solid #eee;
+    min-height: 400px;
+    padding: 10px;
+}
+.part2 {
+    margin-top: 20px;
+}
+.result {
+    border: 1px solid #eee;
+    min-height: 100px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+.btn-submit {
+    padding: 8px 20px;
+    cursor: pointer;
+}
