@@ -1,0 +1,170 @@
+<!-- 用于指定题目的显示与编写 -->
+<!-- 用于指定题目的显示与编写 -->
+<!-- 用于指定题目的显示与编写 -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{number}}.{{title}}</title>
+    <!-- 引入 Ace 代码编辑器 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+    <!-- 引入jquery CDN（改用https） -->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <!-- 加载你的两个样式表 -->
+    <link rel="stylesheet" href="/Interface/Questions1.css">
+    <link rel="stylesheet" href="/Interface/Questions2.css">
+    <style>
+        /* 隐藏存储原始代码的textarea */
+        #code-template {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <a href="/">首页</a>
+            <a href="/questionsList">题库</a>
+            <a class="login" href="#">登录</a>
+        </div>
+        <!-- 左右呈现，题目描述和预设代码 -->
+        <div class="part1">
+            <div class="left_desc">
+                <h3><span id="number">{{num}}</span>.{{title}}_{{star}}</h3>
+                <pre>{{desc}}</pre>
+            </div>
+            <div class="right_code">
+                <!-- 1. 移除直接写在div里的{{code}}，改用隐藏textarea存储原始代码 -->
+                <div id="code" class="ace_editor"></div>
+                <textarea id="code-template">{{code}}</textarea>
+            </div>
+        </div>
+        <!-- 提交并且得到结果，并显示 -->
+        <div class="part2">
+            <div class="result"></div>
+            <button class="btn-submit" onclick="submit()">提交代码</button>
+        </div>
+    </div>
+    <script>
+        // 全局编辑器对象
+        var editor = null;
+
+        // 等待DOM加载完成后初始化编辑器
+        $(document).ready(function() {
+            //初始化Ace编辑器
+            editor = ace.edit("code");
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/c_cpp");
+            editor.setFontSize(16);
+            editor.getSession().setTabSize(4);
+            editor.setReadOnly(false);
+
+            // 启用提示菜单
+            ace.require("ace/ext/language_tools");
+            editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableSnippets: true,
+                enableLiveAutocompletion: true
+            });
+
+            // 2. 从隐藏的textarea读取原始代码（避免HTML解析截断<>）
+            var originalCode = $("#code-template").val();
+            // 替换可能的转义字符（兜底处理模板引擎的转义）
+            originalCode = originalCode.replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+            // 将原始代码设置到编辑器中
+            editor.session.setValue(originalCode);
+        });
+
+        // 提交代码（唯一的submit函数）
+        function submit() {
+            if (!editor) {
+                show_result({ status: -1, reason: "编辑器未初始化" });
+                return;
+            }
+
+            // 1. 获取数据
+            var code = editor.getSession().getValue();
+            var number = $("#number").text().trim();
+
+            if (!number) {
+                show_result({ status: -1, reason: "错误：无法获取题号" });
+                return;
+            }
+
+            var judge_url = "/judge/" + number;
+
+            // 显示加载中
+            show_result({ status: -2, reason: "正在提交代码，请稍候..." });
+
+            // 2. 发送请求
+            $.ajax({
+                method: 'Post',
+                url: judge_url,
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify({
+                    'code': code,
+                    'input': ''
+                }),
+                timeout: 30000,
+                success: function(data) {
+                    // 修复拼写错误：consolo → console
+                    console.log(data);
+                    // 恢复结果展示（之前注释导致提交成功无反馈）
+                    show_result(data);
+                },
+                error: function(xhr, status, error) {
+                    show_result({
+                        status: -1,
+                        reason: "请求失败：" + error,
+                        stderr: "HTTP状态码：" + xhr.status + "\n" + (xhr.responseText || "无响应内容")
+                    });
+                }
+            });
+        }
+
+        // 显示结果（全局函数，正常调用）
+        function show_result(data) {
+            var result_div = $(".container .part2 .result");
+            result_div.empty();
+
+            // 修复：处理data/reason为空的情况，避免undefined
+            var _status = data?.status ?? -1;
+            var _reason = data?.reason ?? "无提示信息";
+
+            // 添加提示文字
+            var $p = $("<p>").text(_reason);
+            result_div.append($p);
+
+            // 成功状态（status=0）
+            if (_status === 0) {
+                var $out = $("<pre>").addClass("success").text(data.stdout || "运行成功无输出");
+                result_div.append($out);
+
+                if (data.stderr) {
+                    var $err = $("<pre>").addClass("error").text(data.stderr);
+                    result_div.append($err);
+                }
+            }
+            // 失败/错误状态
+            else if (_status === -1) {
+                var $info = $("<pre>").addClass("error");
+                var msg = _reason;
+                if (data.stderr) msg += "\n" + data.stderr;
+                $info.text(msg);
+                result_div.append($info);
+            }
+            // 加载中
+            else if (_status === -2) {
+                var $load = $("<pre>").text(_reason);
+                result_div.append($load);
+            }
+        }
+    </script>
+</body>
+</html>
